@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // ScaffoldウィジェットでUIを構築
     return Scaffold(
       appBar: AppBar(
-        title: Text('Text to Speech App'),
+        title: Text('DevListen'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -89,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // ボタンを押すとコンテンツを取得して音声で読み上げる
             // 横並びにするためにRowウィジェットを使用
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // ボタン間のスペースを均等にする
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Flexible(
                   child: ElevatedButton(
@@ -99,6 +99,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       speak(content);
                     },
                     child: Text('Fetch and Speak'),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                    ),
                   ),
                 ),
                 Flexible(
@@ -107,6 +110,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       stopSpeaking();
                     },
                     child: Text('Stop Speaking'),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                    ),
                   ),
                 ),
                 Flexible(
@@ -117,10 +123,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                     child: Text('Reset WebView'),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                    ),
                   ),
                 ),
               ],
             ),
+
             // WebViewを追加
             Expanded(
               child: url.isNotEmpty
