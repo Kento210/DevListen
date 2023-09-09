@@ -63,6 +63,8 @@ HTTPリクエストで内容を取得、成功ならスターテスコード200�
 
 ### #2 ユーザ体験を向上させるために小さなWebViewを実装する。
 
-`webview_flutter`を使用し、WebViewを実装。
+`webview_flutter`を使用し、記事を普通に読むことができるWebViewを実装。
 
 UIも同時に実装し、調節を行う。
+
+URLを参照してWebViewをリセットするボタンも実装する。
