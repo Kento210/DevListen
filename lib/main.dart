@@ -26,6 +26,11 @@ speak(String text) async {
   await flutterTts.speak(text);
 }
 
+// 音声を停止する非同期関数
+stopSpeaking() async {
+  await flutterTts.stop();
+}
+
 // アプリケーションのエントリーポイント
 void main() {
   runApp(MyApp());
@@ -83,12 +88,21 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text('Fetch and Speak'),
             ),
+            // 音声を止めるボタンを追加
+            // このボタンを押すと、音声の読み上げが停止します
+            ElevatedButton(
+              onPressed: () {
+                stopSpeaking();
+              },
+              child: Text('Stop Speaking'),
+            ),
           ],
         ),
       ),
     );
   }
 }
+
 
 
 
