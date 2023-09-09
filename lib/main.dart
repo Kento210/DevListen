@@ -62,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // URLとコンテンツを保持するための変数
   String url = '';
   String content = '';
+  WebViewController? _webViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -86,20 +87,39 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             // ボタンを押すとコンテンツを取得して音声で読み上げる
-            ElevatedButton(
-              onPressed: () async {
-                content = await fetchContent(url);
-                setState(() {});  // UIを更新
-                speak(content);
-              },
-              child: Text('Fetch and Speak'),
-            ),
-            // 音声を止めるボタンを追加
-            ElevatedButton(
-              onPressed: () {
-                stopSpeaking();
-              },
-              child: Text('Stop Speaking'),
+            // 横並びにするためにRowウィジェットを使用
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly, // ボタン間のスペースを均等にする
+              children: [
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      content = await fetchContent(url);
+                      setState(() {});
+                      speak(content);
+                    },
+                    child: Text('Fetch and Speak'),
+                  ),
+                ),
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      stopSpeaking();
+                    },
+                    child: Text('Stop Speaking'),
+                  ),
+                ),
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_webViewController != null) {
+                        _webViewController!.loadUrl(url);
+                      }
+                    },
+                    child: Text('Reset WebView'),
+                  ),
+                ),
+              ],
             ),
             // WebViewを追加
             Expanded(
@@ -107,6 +127,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? WebView(
                       initialUrl: url,
                       javascriptMode: JavascriptMode.unrestricted,
+                      onWebViewCreated: (WebViewController webViewController) {
+                        _webViewController = webViewController;
+                      },
                     )
                   : Container(),
             ),
@@ -116,6 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
 
 
 
