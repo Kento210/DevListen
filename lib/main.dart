@@ -17,16 +17,17 @@ Future<String> fetchContent(String url) async {
 
 // 重要な単語を抽出する関数
 List<String> extractImportantWords(String text) {
-  List<String> sentences = text.split('. ');
+  // アルファベット、数字、特殊文字を除外
+  String filteredText = text.replaceAll(RegExp(r'[^一-龯ぁ-んァ-ンーa-zA-Zａ-ｚＡ-Ｚ々〆〤]'), ' ');
+
+  List<String> words = filteredText.split(' ').where((word) => word.isNotEmpty).toList();  // 単語に分割
   Map<String, int> frequency = {};
 
-  for (String sentence in sentences) {
-    for (String word in sentence.split(' ')) {
-      if (frequency.containsKey(word)) {
-        frequency[word] = frequency[word]! + 1;
-      } else {
-        frequency[word] = 1;
-      }
+  for (String word in words) {
+    if (frequency.containsKey(word)) {
+      frequency[word] = frequency[word]! + 1;
+    } else {
+      frequency[word] = 1;
     }
   }
 
@@ -161,9 +162,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-
-
-
 
 
