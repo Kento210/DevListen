@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // テキストを音声に変換するためのライブラリをインポート
 import 'package:flutter_tts/flutter_tts.dart';
+// マークダウン表示のためのライブラリをインポート
+import 'package:flutter_markdown/flutter_markdown.dart';
+// webview_flutterパッケージをインポート
+import 'package:webview_flutter/webview_flutter.dart';
 
 // 非同期関数でURLからコンテンツを取得
 Future<String> fetchContent(String url) async {
@@ -58,17 +62,19 @@ class _MyHomePageState extends State<MyHomePage> {
   // URLとコンテンツを保持するための変数
   String url = '';
   String content = '';
+  WebViewController? _webViewController;
 
   @override
   Widget build(BuildContext context) {
     // ScaffoldウィジェットでUIを構築
     return Scaffold(
       appBar: AppBar(
-        title: Text('Text to Speech App'),
+        title: Text('DevListen'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             // URLを入力するためのテキストフィールド
             TextField(
@@ -81,20 +87,61 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
             // ボタンを押すとコンテンツを取得して音声で読み上げる
-            ElevatedButton(
-              onPressed: () async {
-                content = await fetchContent(url);
-                speak(content);
-              },
-              child: Text('Fetch and Speak'),
+            // 横並びにするためにRowウィジェットを使用
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      content = await fetchContent(url);
+                      setState(() {});
+                      speak(content);
+                    },
+                    child: Text('Fetch and Speak'),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      stopSpeaking();
+                    },
+                    child: Text('Stop Speaking'),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_webViewController != null) {
+                        _webViewController!.loadUrl(url);
+                      }
+                    },
+                    child: Text('Reset WebView'),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.center,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            // 音声を止めるボタンを追加
-            // このボタンを押すと、音声の読み上げが停止します
-            ElevatedButton(
-              onPressed: () {
-                stopSpeaking();
-              },
-              child: Text('Stop Speaking'),
+
+            // WebViewを追加
+            Expanded(
+              child: url.isNotEmpty
+                  ? WebView(
+                      initialUrl: url,
+                      javascriptMode: JavascriptMode.unrestricted,
+                      onWebViewCreated: (WebViewController webViewController) {
+                        _webViewController = webViewController;
+                      },
+                    )
+                  : Container(),
             ),
           ],
         ),
@@ -102,6 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
 
 
 
