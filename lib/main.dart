@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 // テキストを音声に変換するためのライブラリをインポート
 import 'package:flutter_tts/flutter_tts.dart';
+// マークダウン表示のためのライブラリをインポート
+import 'package:flutter_markdown/flutter_markdown.dart';  // 追加
 
 // 非同期関数でURLからコンテンツを取得
 Future<String> fetchContent(String url) async {
@@ -69,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,  // 追加
           children: [
             // URLを入力するためのテキストフィールド
             TextField(
@@ -84,17 +87,28 @@ class _MyHomePageState extends State<MyHomePage> {
             ElevatedButton(
               onPressed: () async {
                 content = await fetchContent(url);
+                setState(() {});  // UIを更新
                 speak(content);
               },
               child: Text('Fetch and Speak'),
             ),
             // 音声を止めるボタンを追加
-            // このボタンを押すと、音声の読み上げが停止します
             ElevatedButton(
               onPressed: () {
                 stopSpeaking();
               },
               child: Text('Stop Speaking'),
+            ),
+            // 取得した内容をマークダウン形式で表示
+            // Expandedウィジェットを使って残りの利用可能なスペースを埋める
+            Expanded(
+              child: content.isNotEmpty // contentが空でない場合のみMarkdownウィジェットを表示
+                  ? SingleChildScrollView(
+                      child: Text(
+                        content,
+                      ),
+                    )
+                  : Container(), // contentが空の場合は何も表示しない
             ),
           ],
         ),
