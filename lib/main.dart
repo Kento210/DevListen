@@ -5,7 +5,9 @@ import 'package:http/http.dart' as http;
 // テキストを音声に変換するためのライブラリをインポート
 import 'package:flutter_tts/flutter_tts.dart';
 // マークダウン表示のためのライブラリをインポート
-import 'package:flutter_markdown/flutter_markdown.dart';  // 追加
+import 'package:flutter_markdown/flutter_markdown.dart';
+// webview_flutterパッケージをインポート
+import 'package:webview_flutter/webview_flutter.dart';
 
 // 非同期関数でURLからコンテンツを取得
 Future<String> fetchContent(String url) async {
@@ -71,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisSize: MainAxisSize.min,  // 追加
+          mainAxisSize: MainAxisSize.min,
           children: [
             // URLを入力するためのテキストフィールド
             TextField(
@@ -99,16 +101,14 @@ class _MyHomePageState extends State<MyHomePage> {
               },
               child: Text('Stop Speaking'),
             ),
-            // 取得した内容をマークダウン形式で表示
-            // Expandedウィジェットを使って残りの利用可能なスペースを埋める
+            // WebViewを追加
             Expanded(
-              child: content.isNotEmpty // contentが空でない場合のみMarkdownウィジェットを表示
-                  ? SingleChildScrollView(
-                      child: Text(
-                        content,
-                      ),
+              child: url.isNotEmpty
+                  ? WebView(
+                      initialUrl: url,
+                      javascriptMode: JavascriptMode.unrestricted,
                     )
-                  : Container(), // contentが空の場合は何も表示しない
+                  : Container(),
             ),
           ],
         ),
