@@ -17,10 +17,8 @@ Future<String> fetchContent(String url) async {
 
 // 重要な単語を抽出する関数
 List<String> extractImportantWords(String text) {
-  // アルファベット、数字、特殊文字を除外
-  String filteredText = text.replaceAll(RegExp(r'[^一-龯ぁ-んァ-ンーa-zA-Zａ-ｚＡ-Ｚ々〆〤]'), ' ');
-
-  List<String> words = filteredText.split(' ').where((word) => word.isNotEmpty).toList();  // 単語に分割
+  String filteredText = text.replaceAll(RegExp(r'[^一-龯ぁ-んァ-ンー]'), ' ');
+  List<String> words = filteredText.split(' ').where((word) => word.isNotEmpty).toList();
   Map<String, int> frequency = {};
 
   for (String word in words) {
@@ -35,6 +33,17 @@ List<String> extractImportantWords(String text) {
     ..sort((a, b) => b.value.compareTo(a.value));
 
   return sortedWords.sublist(0, min(10, sortedWords.length)).map((entry) => entry.key).toList();
+}
+
+// 一分間に読める文字数（この数値は調整が必要かもしれません）
+const int charsPerMinute = 5000;
+
+// テキストの文字数から読むのにかかる時間（秒）を計算
+String calculateReadingTime(String text) {
+  int totalSeconds = (text.length / charsPerMinute * 60).ceil();
+  int minutes = totalSeconds ~/ 60;
+  int seconds = totalSeconds % 60;
+  return '$minutes分$seconds秒';
 }
 
 FlutterTts flutterTts = FlutterTts();
@@ -83,7 +92,6 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // URLを入力するテキストフィールド
             TextField(
               decoration: InputDecoration(labelText: 'Enter URL'),
               onChanged: (value) {
@@ -92,7 +100,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
             ),
-            // ボタン群
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -138,13 +145,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            // 重要な単語を表示
             Text(
               '重要ワード:',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             Text(importantWords.join(', ')),
-            // WebViewを表示
+            Text(
+              '読むのにかかる時間（推定）:',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(calculateReadingTime(content)),
             Expanded(
               child: url.isNotEmpty
                   ? WebView(
@@ -162,5 +172,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
 
