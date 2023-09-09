@@ -17,10 +17,8 @@ Future<String> fetchContent(String url) async {
 
 // 重要な単語を抽出する関数
 List<String> extractImportantWords(String text) {
-  // アルファベット、数字、特殊文字を除外
-  String filteredText = text.replaceAll(RegExp(r'[^一-龯ぁ-んァ-ンーa-zA-Zａ-ｚＡ-Ｚ々〆〤]'), ' ');
-
-  List<String> words = filteredText.split(' ').where((word) => word.isNotEmpty).toList();  // 単語に分割
+  String filteredText = text.replaceAll(RegExp(r'[^一-龯ぁ-んァ-ンー]'), ' ');
+  List<String> words = filteredText.split(' ').where((word) => word.isNotEmpty).toList();
   Map<String, int> frequency = {};
 
   for (String word in words) {
@@ -34,7 +32,18 @@ List<String> extractImportantWords(String text) {
   List<MapEntry<String, int>> sortedWords = frequency.entries.toList()
     ..sort((a, b) => b.value.compareTo(a.value));
 
-  return sortedWords.sublist(0, min(10, sortedWords.length)).map((entry) => entry.key).toList();
+  return sortedWords.sublist(0, min(5, sortedWords.length)).map((entry) => entry.key).toList();
+}
+
+// 一分間に読める文字数（この数値は調整が必要かもしれません）
+const int charsPerMinute = 5000;
+
+// テキストの文字数から読むのにかかる時間（秒）を計算
+String calculateReadingTime(String text) {
+  int totalSeconds = (text.length / charsPerMinute * 60).ceil();
+  int minutes = totalSeconds ~/ 60;
+  int seconds = totalSeconds % 60;
+  return '$minutes分$seconds秒';
 }
 
 FlutterTts flutterTts = FlutterTts();
@@ -72,18 +81,55 @@ class _MyHomePageState extends State<MyHomePage> {
   String content = '';
   List<String> importantWords = [];
   WebViewController? _webViewController;
+  bool showImportantWords = true;  // このフラグで重要ワードの表示を制御
+  bool showReadingTime = true;     // このフラグで読むのにかかる時間の表示を制御
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('DevListen'),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: Row(
+                  children: [
+                    Text("Show Important Words"),
+                    Switch(
+                      value: showImportantWords,
+                      onChanged: (value) {
+                        setState(() {
+                          showImportantWords = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                child: Row(
+                  children: [
+                    Text("Show Reading Time"),
+                    Switch(
+                      value: showReadingTime,
+                      onChanged: (value) {
+                        setState(() {
+                          showReadingTime = value;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // URLを入力するテキストフィールド
             TextField(
               decoration: InputDecoration(labelText: 'Enter URL'),
               onChanged: (value) {
@@ -92,7 +138,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
             ),
-            // ボタン群
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -138,13 +183,43 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            // 重要な単語を表示
-            Text(
-              '重要ワード:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (showImportantWords)  // このif文で表示を制御
+                Container(
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blueAccent),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '重要ワード:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(importantWords.join(', ')),
+                    ],
+                  ),
+                ),
+              if (showReadingTime)  // このif文で表示を制御
+                Container(
+                  padding: EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blueAccent),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        '読むのにかかる時間（推定）:',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      Text(calculateReadingTime(content)),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Text(importantWords.join(', ')),
-            // WebViewを表示
             Expanded(
               child: url.isNotEmpty
                   ? WebView(
@@ -162,5 +237,9 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
+
 
 
