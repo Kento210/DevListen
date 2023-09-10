@@ -26,8 +26,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[300],  // Scaffoldの背景色を明るい灰色に
       appBar: AppBar(
         title: Text('DevListen'),
+        backgroundColor: Colors.grey[800],  // AppBarの背景色を灰色に
         actions: [
           // 右上のポップアップメニュー
           PopupMenuButton(
@@ -96,8 +98,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       speak(plainText);
                       setState(() {});
                     },
-                    child: Text('Fetch and Speak'),
+                    child: Text('Fetch Speak'),
                     style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],  // ボタンの背景色を灰色に
                       alignment: Alignment.center,
                     ),
                   ),
@@ -110,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     },
                     child: Text('Stop Speaking'),
                     style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
                       alignment: Alignment.center,
                     ),
                   ),
@@ -122,8 +126,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         _webViewController!.loadUrl(url);
                       }
                     },
-                    child: Text('Reset WebView'),
+                    child: Text('Reset View'),
                     style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
                       alignment: Alignment.center,
                     ),
                   ),
@@ -138,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blueAccent),
+                    border: Border.all(color: Colors.grey[800]!),
                   ),
                   child: Column(
                     children: [
@@ -154,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blueAccent),
+                    border: Border.all(color: Colors.grey[800]!),
                   ),
                   child: Column(
                     children: [
