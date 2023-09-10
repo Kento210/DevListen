@@ -5,7 +5,7 @@ import 'package:html/parser.dart' show parse;
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:math';
 
-// 非同期関数でURLからコンテンツを取得
+// URLからコンテンツを非同期で取得する関数
 Future<String> fetchContent(String url) async {
   final response = await http.get(Uri.parse(url));
   if (response.statusCode == 200) {
@@ -15,12 +15,14 @@ Future<String> fetchContent(String url) async {
   }
 }
 
-// 重要な単語を抽出する関数
+// 重要な単語をテキストから抽出する関数
 List<String> extractImportantWords(String text) {
+  // 不要な文字を削除
   String filteredText = text.replaceAll(RegExp(r'[^一-龯ぁ-んァ-ンー]'), ' ');
+  // 単語に分割
   List<String> words = filteredText.split(' ').where((word) => word.isNotEmpty).toList();
+  // 単語の出現回数をカウント
   Map<String, int> frequency = {};
-
   for (String word in words) {
     if (frequency.containsKey(word)) {
       frequency[word] = frequency[word]! + 1;
@@ -28,17 +30,17 @@ List<String> extractImportantWords(String text) {
       frequency[word] = 1;
     }
   }
-
+  // 出現回数でソート
   List<MapEntry<String, int>> sortedWords = frequency.entries.toList()
     ..sort((a, b) => b.value.compareTo(a.value));
-
+  // 上位5つの単語を返す
   return sortedWords.sublist(0, min(5, sortedWords.length)).map((entry) => entry.key).toList();
 }
 
-// 一分間に読める文字数（この数値は調整が必要かもしれません）
+// 一分間に読める文字数（この数値は調整が必要）
 const int charsPerMinute = 5000;
 
-// テキストの文字数から読むのにかかる時間（秒）を計算
+// テキストの文字数から読むのにかかる時間（秒）を計算する関数
 String calculateReadingTime(String text) {
   int totalSeconds = (text.length / charsPerMinute * 60).ceil();
   int minutes = totalSeconds ~/ 60;
@@ -46,14 +48,15 @@ String calculateReadingTime(String text) {
   return '$minutes分$seconds秒';
 }
 
+// FlutterTTSのインスタンス
 FlutterTts flutterTts = FlutterTts();
 
-// テキストを音声に変換する関数
+// テキストを音声で読み上げる関数
 speak(String text) async {
   await flutterTts.speak(text);
 }
 
-// 音声を停止する関数
+// 音声の読み上げを停止する関数
 stopSpeaking() async {
   await flutterTts.stop();
 }
@@ -77,12 +80,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String url = '';
-  String content = '';
-  List<String> importantWords = [];
-  WebViewController? _webViewController;
-  bool showImportantWords = true;  // このフラグで重要ワードの表示を制御
-  bool showReadingTime = true;     // このフラグで読むのにかかる時間の表示を制御
+  String url = '';  // 入力されたURL
+  String content = '';  // 取得したコンテンツ
+  List<String> importantWords = [];  // 重要な単語のリスト
+  WebViewController? _webViewController;  // WebViewのコントローラ
+  bool showImportantWords = true;  // 重要な単語を表示するかどうか
+  bool showReadingTime = true;  // 読むのにかかる時間を表示するかどうか
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +93,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('DevListen'),
         actions: [
+          // 右上のメニュー
           PopupMenuButton(
             itemBuilder: (context) => [
+              // 重要な単語の表示切り替え
               PopupMenuItem(
                 child: Row(
                   children: [
@@ -107,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
+              // 読むのにかかる時間の表示切り替え
               PopupMenuItem(
                 child: Row(
                   children: [
@@ -130,6 +136,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // URL入力フィールド
             TextField(
               decoration: InputDecoration(labelText: 'Enter URL'),
               onChanged: (value) {
@@ -138,9 +145,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
             ),
+            // ボタン群
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // コンテンツ取得と読み上げボタン
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -157,6 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
+                // 読み上げ停止ボタン
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () {
@@ -168,6 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
+                // WebViewリセットボタン
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () {
@@ -183,10 +194,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+            // 重要な単語と読むのにかかる時間の表示
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if (showImportantWords)  // このif文で表示を制御
+                if (showImportantWords)
                 Container(
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
@@ -202,7 +214,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ],
                   ),
                 ),
-              if (showReadingTime)  // このif文で表示を制御
+                if (showReadingTime)
                 Container(
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
@@ -220,6 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
+            // WebViewの表示
             Expanded(
               child: url.isNotEmpty
                   ? WebView(
@@ -237,6 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
 
 
 
