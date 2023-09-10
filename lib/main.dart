@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 /*
   main.dart:
   アプリケーションのエントリーポイント
 */
 
+import 'package:flutter/material.dart';
 import '/my_home_page.dart';  // MyHomePageウィジェットが定義されているmy_home_page.dartをインポート
 import '/utilities.dart';  // ユーティリティ関数（speak, stopSpeakingなど）が定義されているutilities.dartをインポート
 
