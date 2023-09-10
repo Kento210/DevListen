@@ -1,20 +1,27 @@
+/*
+  my_home_page.dart:
+  ウィジェットを格納
+*/
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:html/parser.dart' show parse;
-import '/utilities.dart';  // utilities.dartをインポート
+import '/utilities.dart';  // utilities.dartをインポートで、speakやstopSpeakingなどの関数を利用
 
+// MyHomePageウィジェットの定義
 class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+// MyHomePageの状態を管理するクラス
 class _MyHomePageState extends State<MyHomePage> {
-  String url = '';  // 入力されたURL
-  String content = '';  // 取得したコンテンツ
-  List<String> importantWords = [];  // 重要な単語のリスト
+  String url = '';  // 入力されたURLを保存
+  String content = '';  // フェッチしたコンテンツを保存
+  List<String> importantWords = [];  // 重要な単語を保存
   WebViewController? _webViewController;  // WebViewのコントローラ
-  bool showImportantWords = true;  // 重要な単語を表示するかどうか
-  bool showReadingTime = true;  // 読むのにかかる時間を表示するかどうか
+  bool showImportantWords = true;  // 重要な単語を表示するかどうかのフラグ
+  bool showReadingTime = true;  // 読むのにかかる時間を表示するかどうかのフラグ
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +29,10 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('DevListen'),
         actions: [
-          // 右上のメニュー
+          // 右上のポップアップメニュー
           PopupMenuButton(
             itemBuilder: (context) => [
-              // 重要な単語の表示切り替え
+              // 重要な単語の表示を切り替えるスイッチ
               PopupMenuItem(
                 child: Row(
                   children: [
@@ -41,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-              // 読むのにかかる時間の表示切り替え
+              // 読むのにかかる時間の表示を切り替えるスイッチ
               PopupMenuItem(
                 child: Row(
                   children: [
@@ -65,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // URL入力フィールド
+            // URLを入力するテキストフィールド
             TextField(
               decoration: InputDecoration(labelText: 'Enter URL'),
               onChanged: (value) {
@@ -74,11 +81,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               },
             ),
-            // ボタン群
+            // 各種操作ボタン
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // コンテンツ取得と読み上げボタン
+                // コンテンツをフェッチして読み上げるボタン
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () async {
@@ -95,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                // 読み上げ停止ボタン
+                // 読み上げを停止するボタン
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () {
@@ -107,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 ),
-                // WebViewリセットボタン
+                // WebViewをリセットするボタン
                 Flexible(
                   child: ElevatedButton(
                     onPressed: () {
@@ -123,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            // 重要な単語と読むのにかかる時間の表示
+            // 重要な単語と読むのにかかる時間の表示エリア
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -161,7 +168,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            // WebViewの表示
+            // WebViewの表示エリア
             Expanded(
               child: url.isNotEmpty
                   ? WebView(
@@ -179,3 +186,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
