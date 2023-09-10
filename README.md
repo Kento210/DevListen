@@ -1,4 +1,4 @@
-# DevListen README （最終更新 9/10 5:50）
+# DevListen README （最終更新 9/10 13:00）
 
 # 開発ルール
 
@@ -91,4 +91,20 @@ URLを参照してWebViewをリセットするボタンも実装する。
 
 設定タブを追加し、重要ワード機能と読むのにかかる時間を表示する機能をオンオフでスイッチングできるようにする。
 
-### #8 Firebase App Distributionで試験的にデプロイを行う。
+### #8 mainのコードが長すぎるので機能ごとに分割する
+
+非同期関数とユーティリティを格納
+
+**utilities.dart**
+
+`fetchContent`, `extractImportantWords`, `calculateReadingTime`
+
+ウィジェットと状態を格納
+
+**my_home_page.dart**
+
+アプリケーションのエントリーポイント
+
+main.dart
+
+### #9 Firebase App Distributionで試験的にデプロイを行う。
